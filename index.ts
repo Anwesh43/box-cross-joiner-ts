@@ -1,4 +1,4 @@
-const parts : number = 3 
+const parts : number = 4 
 const strokeFactor : number = 90 
 const colors : Array<string> = [
     "#3F51B5",
@@ -31,6 +31,9 @@ class ScaleUtil {
 class DrawingUtil {
 
     static drawLine(context : CanvasRenderingContext2D, x1 : number, y1 : number, x2 : number, y2 : number) {
+        if (x1 == x2 && y1 == y2) {
+            return
+        }
         context.beginPath()
         context.moveTo(x1, y1)
         context.lineTo(x2, y2)
@@ -38,7 +41,7 @@ class DrawingUtil {
     }
 
     static drawBoxCrossJoiner(context : CanvasRenderingContext2D, i : number, scale : number) {
-        const size : number = Math.max(w, h) / sizeFactor 
+        const size : number = Math.min(w, h) / sizeFactor 
         const sf : number = ScaleUtil.sinify(scale)
         const sf1 : number = ScaleUtil.divideScale(sf, 0, parts)
         const sf2 : number = ScaleUtil.divideScale(sf, 1, parts)
@@ -47,9 +50,12 @@ class DrawingUtil {
         const y : number = size * 0.5 * si
         context.save()
         context.translate(-w / 2, 0)
-        context.fillRect(0, -size / 2, size * sf1, size)
-        DrawingUtil.drawLine(context, size, -y, size + (w / 2 - size) * sf2, -y + size * sf2)
-        DrawingUtil.drawLine(context, size, y, size + (w / 2 - size) * sf3, y + size * sf3)
+        if (size * sf1 > 0.1) {
+            context.fillRect(0, -size / 2, size * sf1, size)
+            context.strokeRect(0, -size / 2, size * sf1, size)
+        }
+        DrawingUtil.drawLine(context, size, -y, size + (w / 2 - size) * sf2, -y + size * 0.5 * si * sf2)
+        DrawingUtil.drawLine(context, size, y, size + (w / 2 - size) * sf3, y - size * 0.5 * si * sf3)
         context.restore()
     }
 
