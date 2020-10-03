@@ -213,3 +213,25 @@ class BoxCrossJoiner {
         this.curr.startUpdating(cb)
     }
 }
+
+class Renderer {
+
+    bcj : BoxCrossJoiner = new BoxCrossJoiner()
+    animator : Animator = new Animator()
+
+    render(context : CanvasRenderingContext2D) {
+        this.bcj.draw(context)
+    }
+
+    handleTap(cb : Function) {
+        this.bcj.startUpdating(() => {
+            this.animator.start(() => {
+                cb()
+                this.bcj.update(() => {
+                    this.animator.stop()
+                    cb()
+                })
+            })
+        })
+    }
+}
